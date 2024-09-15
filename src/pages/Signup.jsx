@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { auth, firestore, storage, provider } from "../firebase/Firebase";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
-
+import { FaUser, FaEnvelope, FaLock, FaImage, FaGoogle } from "react-icons/fa";
 function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +36,6 @@ function SignUp() {
       );
       const user = userCredential.user;
 
-      // Handle profile picture upload
       let profilePicUrl = "";
       if (profilePic) {
         const picRef = ref(storage, `profilePics/${user.uid}`);
@@ -43,14 +43,12 @@ function SignUp() {
         profilePicUrl = await getDownloadURL(picRef);
       }
 
-      // Save user data to Firestore
       await setDoc(doc(firestore, `users/${user.uid}`), {
         username,
         email: user.email,
         profilePic: profilePicUrl,
       });
 
-      // Save user data to local storage
       localStorage.setItem(
         "userInfo",
         JSON.stringify({
@@ -67,7 +65,7 @@ function SignUp() {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/main"); // Redirect to the main page
+        navigate("/main");
       });
     } catch (err) {
       setError(err.message);
@@ -83,8 +81,6 @@ function SignUp() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // Get profile picture URL if available
       const profilePicUrl = user.photoURL || "";
 
       await setDoc(doc(firestore, `users/${user.uid}`), {
@@ -109,7 +105,7 @@ function SignUp() {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/main"); // Redirect to the main page
+        navigate("/main");
       });
     } catch (err) {
       setError(err.message);
@@ -119,162 +115,189 @@ function SignUp() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <form onSubmit={handleEmailPasswordSignup}>
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 to-indigo-900">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md bg-white bg-opacity-10 p-8 rounded-lg shadow-lg backdrop-blur-md"
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">
+          Sign Up
+        </h2>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-500 mb-4 text-center"
+          >
+            {error}
+          </motion.p>
+        )}
+        <form onSubmit={handleEmailPasswordSignup} className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="relative"
+          >
+            <FaUser className="absolute top-3 left-3 text-gray-400" />
             <input
               type="text"
-              id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Username"
+              className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-300"
             />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="relative"
+          >
+            <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Email"
+              className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-300"
             />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative"
+          >
+            <FaLock className="absolute top-3 left-3 text-gray-400" />
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Password"
+              className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-300"
             />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="confirm_password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirm Password
-            </label>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="relative"
+          >
+            <FaLock className="absolute top-3 left-3 text-gray-400" />
             <input
               type="password"
-              id="confirm_password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Confirm Password"
+              className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-300"
             />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="profile_pic"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Profile Picture
-            </label>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="relative"
+          >
+            <FaImage className="absolute top-3 left-3 text-gray-400" />
             <input
               type="file"
-              id="profile_pic"
               accept="image/*"
               onChange={(e) => setProfilePic(e.target.files[0])}
-              className="mt-1 block w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-300 file:text-sm file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+              className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
             />
-          </div>
-          <button
+          </motion.div>
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full py-2 px-4 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Signing Up..." : "Sign Up"}
-          </button>
+          </motion.button>
         </form>
-        <div className="mt-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-4"
+        >
           <button
             onClick={handleGoogleSignup}
-            className="flex items-center px-4 py-2 border border-black text-black bg-white hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black-500 font-medium rounded-md text-sm"
+            className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             disabled={loading}
           >
-            <img
-              className="h-6 mr-2"
-              src="https://img.icons8.com/?size=512&id=17949&format=png"
-              alt="Google icon"
-            />
+            <FaGoogle className="mr-2" />
             {loading ? "Signing up with Google..." : "Sign up with Google"}
           </button>
-        </div>
-        <p className="mt-4 text-center text-sm text-gray-600">
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mt-4 text-center text-sm text-gray-300"
+        >
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700">
+          <Link to="/login" className="text-purple-300 hover:underline">
             Login
           </Link>
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
       {loading && (
-        <div className="loader-container">
-          <div className="dot"></div>
-          <div className="dot"></div>
-          <div className="dot"></div>
-          <div className="dot"></div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+        >
+          <div className="loader-container">
+            <div className="dot"></div>
+            <div className="dot"></div>
+            <div className="dot"></div>
+            <div className="dot"></div>
+          </div>
+        </motion.div>
       )}
-      <style>
-        {`
-          .loader-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-            width: 100%;
+      <style jsx>{`
+        .loader-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .dot {
+          width: 12px;
+          height: 12px;
+          margin: 0 5px;
+          background-color: #fff;
+          border-radius: 50%;
+          animation: dot-flashing 1.5s infinite linear alternate;
+        }
+        .dot:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .dot:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+        .dot:nth-child(4) {
+          animation-delay: 0.6s;
+        }
+        @keyframes dot-flashing {
+          0% {
+            opacity: 0.2;
           }
-          .dot {
-            width: 12px;
-            height: 12px;
-            margin: 0 5px;
-            background-color: #333;
-            border-radius: 50%;
-            animation: dot-flashing 1.5s infinite linear;
+          100% {
+            opacity: 1;
           }
-          .dot:nth-child(1) {
-            animation-delay: -0.3s;
-          }
-          .dot:nth-child(2) {
-            animation-delay: -0.15s;
-          }
-          @keyframes dot-flashing {
-            0%, 100% {
-              opacity: 0;
-            }
-            50% {
-              opacity: 1;
-            }
-          }
-        `}
-      </style>
+        }
+      `}</style>
     </div>
   );
 }
-
 export default SignUp;

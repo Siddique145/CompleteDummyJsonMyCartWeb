@@ -13,7 +13,6 @@ function Home() {
           <Route path="/products/:id" element={<ProductsDetail />}></Route> */}
         </Routes>
       </BrowserRouter>
-      
     </>
   );
 }

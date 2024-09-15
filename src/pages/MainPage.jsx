@@ -19,9 +19,9 @@ function MainPage() {
         if (!user) {
           // User is not logged in, redirect to login page after 6 seconds
           setTimeout(() => {
-            alert("Hello Kindly First Register Yourself")
+            alert("Hello Kindly First Register Yourself");
             navigate("/login"); // Adjust the path to your login page
-          },6000);
+          }, 6000);
         }
       } catch (error) {
         console.error("Error checking user authentication", error);
@@ -42,7 +42,7 @@ function MainPage() {
       <Statics />
 
       <Testimonials />
-      <Footer/>
+      <Footer />
     </>
   );
 }
